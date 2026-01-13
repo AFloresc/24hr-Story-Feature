@@ -10,18 +10,46 @@ export default function StoryBar({ onAdd, onSelect }) {
         <Box
         sx={{
             width: "100%",
-            overflowX: "auto",
             py: 1,
-            mb: 3
+            mb: 3,
+
+            // 🔥 En pantallas pequeñas NO queremos scroll horizontal
+            overflowX: {
+            xs: "visible",
+            sm: "auto"
+            }
         }}
         >
-        <Stack direction="row" spacing={2} alignItems="center">
-            {/* Add story button */}
+        <Stack
+            spacing={2}
+            alignItems="center"
+
+            // 🔥 Responsive layout
+            direction={{
+            xs: "column",   // móviles → apilado vertical
+            sm: "row"       // tablets/desktop → horizontal
+            }}
+
+            // 🔥 Centrado en móvil, alineado en fila en desktop
+            justifyContent={{
+            xs: "center",
+            sm: "flex-start"
+            }}
+        >
+            {/* Botón de añadir story */}
             <IconButton onClick={onAdd} color="primary">
-            <AddCircleIcon sx={{ fontSize: 40 }} />
+            <AddCircleIcon
+                sx={{
+                fontSize: {
+                    xs: 40,
+                    sm: 44,
+                    md: 48
+                }
+                }}
+            />
             </IconButton>
 
-            {/* Story avatars */}
+            {/* Stories */}
             {stories.map((story, index) => (
             <StoryAvatar
                 key={story.id}

@@ -41,8 +41,8 @@ function AppContent() {
         py: 4
       }}
     >
+      {/* Header centrado */}
       <Container maxWidth="sm" sx={{ width: "100%" }}>
-        {/* Header */}
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -57,28 +57,39 @@ function AppContent() {
             <AddCircleIcon fontSize="large" />
           </IconButton>
         </Stack>
+      </Container>
 
-        {/* Story bar */}
+      {/* StoryBar full-width real */}
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          width: "100%",
+          px: 2,            // padding lateral suave
+          display: "flex",
+          justifyContent: "center"
+        }}
+      >
         <StoryBar
           onAdd={() => setOpenUpload(true)}
           onSelect={(index) => openViewer(index)}
         />
-
-        {/* Upload dialog */}
-        <UploadDialog
-          open={openUpload}
-          onClose={() => setOpenUpload(false)}
-        />
-
-        {/* Story viewer */}
-        {viewerIndex !== null && (
-          <StoryViewer
-            stories={stories}
-            initialIndex={viewerIndex}
-            onClose={closeViewer}
-          />
-        )}
       </Container>
+
+      {/* Upload dialog */}
+      <UploadDialog
+        open={openUpload}
+        onClose={() => setOpenUpload(false)}
+      />
+
+      {/* Story viewer */}
+      {viewerIndex !== null && (
+        <StoryViewer
+          stories={stories}
+          initialIndex={viewerIndex}
+          onClose={closeViewer}
+        />
+      )}
     </Box>
   );
 }

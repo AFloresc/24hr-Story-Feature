@@ -9,10 +9,11 @@ export default function StoryBar({ onAdd, onSelect }) {
   return (
     <Box
       sx={{
-        width: "100%",
         py: 1,
         mb: 3,
-        overflowX: { xs: "visible", sm: "auto" }
+        overflow: "visible", // 🔥 sin scroll
+        display: "flex",
+        justifyContent: "center"
       }}
     >
       <Stack
@@ -20,6 +21,11 @@ export default function StoryBar({ onAdd, onSelect }) {
         alignItems="center"
         direction={{ xs: "column", sm: "row" }}
         justifyContent={{ xs: "center", sm: "flex-start" }}
+        sx={{
+          flexWrap: "wrap",       // 🔥 permite que los hijos se ajusten
+          overflow: "visible",    // 🔥 sin scroll
+          gap: 2                  // 🔥 spacing real entre filas
+        }}
       >
         <IconButton onClick={onAdd} color="primary">
           <AddCircleIcon
@@ -33,7 +39,7 @@ export default function StoryBar({ onAdd, onSelect }) {
           <StoryAvatar
             key={story.id}
             image={story.imageData}
-            seen={story.seen}   // 🔥 aquí se pasa
+            seen={story.seen}
             onClick={() => onSelect?.(index)}
           />
         ))}

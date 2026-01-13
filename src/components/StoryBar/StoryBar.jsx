@@ -1,6 +1,6 @@
 import { Box, Stack, IconButton } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { useStories } from "../../context/StoriesProvider";
+import { useStories } from "../context/StoriesProvider";
 import StoryAvatar from "./StoryAvatar";
 
 export default function StoryBar({ onAdd, onSelect }) {

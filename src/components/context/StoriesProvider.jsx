@@ -1,72 +1,60 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-const StoriesContext = createContext(null);
+const StoriesContext = createContext();
 
 export function StoriesProvider({ children }) {
-    const logic = useStoriesLogic();
-    return (
-        <StoriesContext.Provider value={logic}>
-        {children}
-        </StoriesContext.Provider>
+  const [stories, setStories] = useState([]);
+
+  // Load from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("stories");
+    if (saved) {
+      try {
+        setStories(JSON.parse(saved));
+      } catch (err) {
+        console.error("Error parsing stories:", err);
+      }
+    }
+  }, []);
+
+  const saveStories = (updated) => {
+    setStories(updated);
+    localStorage.setItem("stories", JSON.stringify(updated));
+  };
+
+  // Add a new story
+  const addStory = (imageData) => {
+    const newStory = {
+      id: crypto.randomUUID(),
+      imageData,
+      createdAt: Date.now(),
+      seen: false // 🔥 nuevo
+    };
+
+    const updated = [...stories, newStory];
+    saveStories(updated);
+  };
+
+  // Mark story as seen
+  const markAsSeen = (id) => {
+    const updated = stories.map((s) =>
+      s.id === id ? { ...s, seen: true } : s
     );
+
+    saveStories(updated);
+  };
+
+  return (
+    <StoriesContext.Provider
+      value={{
+        stories,
+        addStory,
+        markAsSeen
+      }}
+    >
+      {children}
+    </StoriesContext.Provider>
+  );
 }
 
 export const useStories = () => useContext(StoriesContext);
-
-// ------------------------------------------------------
-// Internal logic hook
-// ------------------------------------------------------
-
-function useStoriesLogic() {
-    const [stories, setStories] = useState([]);
-
-    // Load stories on mount
-    useEffect(() => {
-        const stored = JSON.parse(localStorage.getItem("stories") || "[]");
-        const cleaned = removeExpired(stored);
-        setStories(cleaned);
-        localStorage.setItem("stories", JSON.stringify(cleaned));
-    }, []);
-
-    // Persist on change
-    useEffect(() => {
-        localStorage.setItem("stories", JSON.stringify(stories));
-    }, [stories]);
-
-    // Add new story (base64 image)
-    const addStory = (imageData) => {
-        const newStory = {
-        id: crypto.randomUUID(),
-        imageData,
-        createdAt: Date.now()
-        };
-        setStories((prev) => [...prev, newStory]);
-    };
-
-    // Remove a story manually (optional)
-    const removeStory = (id) => {
-        setStories((prev) => prev.filter((s) => s.id !== id));
-    };
-
-    // Clean expired stories (24h)
-    const refreshStories = () => {
-        setStories((prev) => removeExpired(prev));
-    };
-
-    return {
-        stories,
-        addStory,
-        removeStory,
-        refreshStories
-    };
-}
-
-// ------------------------------------------------------
-// Helpers
-// ------------------------------------------------------
-
-function removeExpired(stories) {
-    const DAY = 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    return stories.filter((s) => now - s.createdAt < DAY);
-}
